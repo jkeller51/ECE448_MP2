@@ -8,8 +8,9 @@ Created on Thu Feb 15 12:51:13 2018
 class Node():
     
     
-    def __init__(self, widgets, cost, evaluation, previous):
+    def __init__(self, value, widgets, cost, previous):
         """
+        value : the component added at this node
         widgets : list of widgets
         cost  : cost to get to this point
         evaluation : cost plus heuristic to reach the goal
@@ -17,10 +18,11 @@ class Node():
         widgets : 
         """
         
+        self.value = value
         self.widgets = widgets
         self.cost = cost
         self.previous = previous
-        self.evaluation = evaluation
+        self.evaluation = self.cost+average_parts_needed(widgets)
         
 
 class Widget():
@@ -64,3 +66,12 @@ class Widget():
             return self.componentStructure[len(self.components)]
         else:
             return None
+        
+        
+def average_parts_needed(Widgets):
+    # generate the average number of parts left to add to widgets
+    summ=0
+    for w in Widgets:
+        summ+=len(w.componentStructure)-len(w.components)
+        
+    return summ/len(Widgets)
