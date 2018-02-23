@@ -5,6 +5,26 @@ Created on Thu Feb 15 12:51:13 2018
 @author: jkell
 """
 
+class Node():
+    
+    evaluation = None
+    cost = None
+    previous = None
+    value = None
+    
+    def __init__(self, value, cost, evaluation, previous):
+        """
+        value : factory letter
+        cost  : cost to get to this point
+        evaluation : cost plus heuristic to reach the goal
+        previous : previous Node, for traceback
+        """
+        self.value = value
+        self.cost = cost
+        self.previous = previous
+        self.value = value
+        
+
 class Widget():
     """ Our widget object
         Contains variables and methods for components
