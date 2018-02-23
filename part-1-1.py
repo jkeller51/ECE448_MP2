@@ -25,6 +25,17 @@ def solve_min_stops(Widgets):
     frontier.append(startNode4)
     frontier.append(startNode5)
     
+#    while length(frontier) > 0:
+#        
+#        # decide what node to expand next
+#        mineval = 9999
+#        minnode = None
+#        for n in frontier:
+#            if (n.evaluation < mineval):
+#                mineval = n.evaluation
+#                minnode = n
+        
+        
     
 
 if __name__ == '__main__':
@@ -35,3 +46,5 @@ if __name__ == '__main__':
     Widget5 = inc.Widget("BECBD")
     
     Widgets = [Widget1, Widget2, Widget3, Widget4, Widget5] # container for passing to function
+    
+    solve_min_stops(Widgets)
