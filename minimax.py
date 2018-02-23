@@ -13,21 +13,7 @@ class Minimax(Agent):
         self.expanded_nodes = 0
         self.type = 'minimax'
 
-    def _all_valid_moves(self, gameboard):
-        """
-        Find all possible moves.
-
-        Args:
-            gameboard(Board): game board
-        Returns:
-            moves(list): list of coordinates to place a stone
-        """
-        moves = []
-        for x in range(gameboard.height):
-            for y in range(gameboard.width):
-                if gameboard.board[x][y] == '.':
-                    moves.append((x,y))
-        return moves
+   
 
     def evaluation(self, gameboard):
         """

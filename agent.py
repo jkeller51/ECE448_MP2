@@ -26,6 +26,24 @@ class Agent(object):
             for i in range(ord('A'), ord('Z')+1):
                 self.steps.append(chr(i))
 
+
+    def _all_valid_moves(self, gameboard):
+        """
+        Find all possible moves.
+
+        Args:
+            gameboard(Board): game board
+        Returns:
+            moves(list): list of coordinates to place a stone
+        """
+        moves = []
+        for x in range(gameboard.height):
+            for y in range(gameboard.width):
+                if gameboard.board[x][y] == '.':
+                    moves.append((x,y))
+        return moves
+
+
     def choose_move(self, moves):
         """ Choose a move from a list, which follows all rules.
 
