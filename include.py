@@ -7,10 +7,6 @@ Created on Thu Feb 15 12:51:13 2018
 
 class Node():
     
-    evaluation = None
-    cost = None
-    previous = None
-    widgets = []
     
     def __init__(self, widgets, cost, evaluation, previous):
         """
@@ -20,6 +16,7 @@ class Node():
         previous : previous Node, for traceback
         widgets : 
         """
+        
         self.widgets = widgets
         self.cost = cost
         self.previous = previous
@@ -31,18 +28,15 @@ class Widget():
         Contains variables and methods for components
     """
     
-    components=[]
-    componentStructure=[]
-    done=False
-    
     def __init__(self, componentString):
         """
         Use componentString to define how to build this widget
         """
-        print(componentString)
+        self.done=False
+        self.components=[]
+        self.componentStructure=[]
         for i in range(0,len(componentString)):
             self.componentStructure.append(componentString[i])
-            print("adding",componentString[i])
             
     def addComponent(self, component):
         """
