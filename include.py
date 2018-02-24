@@ -5,10 +5,16 @@ Created on Thu Feb 15 12:51:13 2018
 @author: jkell
 """
 
+mileageTable = [[0, 1064, 673, 1401, 277],
+                [1064, 0, 958, 1934, 337],
+                [673, 958, 0, 1001, 399],
+                [1401, 1934, 1001, 0, 387],
+                [277, 337, 399, 387, 0]]
+
 class Node():
     
     
-    def __init__(self, value, widgets, cost, previous):
+    def __init__(self, value, widgets, cost, previous, miles=False):
         """
         value : the component added at this node
         widgets : list of widgets
@@ -22,8 +28,13 @@ class Node():
         self.widgets = widgets
         self.cost = cost
         self.previous = previous
-        self.evaluation = self.cost+average_parts_needed(widgets)
-        
+        if (miles == False):
+            self.evaluation = self.cost+average_parts_needed(widgets)
+        else:
+            if (self.value == ''): # start node
+                self.evaluation=0  # don't care.
+            else:
+                self.evaluation = self.cost+minimum_miles_needed(widgets, self.value)
 
 class Widget():
     """ Our widget object
@@ -75,3 +86,35 @@ def average_parts_needed(Widgets):
         summ+=len(w.componentStructure)-len(w.components)
         
     return summ/len(Widgets)
+
+def get_miles(start, end):
+    if (start == ''):
+        return 0
+    start_int = ord(start)-ord('A')
+    end_int = ord(end) - ord('A')
+    
+    return mileageTable[start_int][end_int]
+    
+def minimum_miles_needed(Widgets,curplace):
+    """
+    Find the widget that needs the most parts
+    and add up the mileage to get the parts
+    for just that widget
+    """
+    mincomponents=99
+    minwidget = None
+    for w in Widgets:
+        if (len(w.components) < mincomponents):
+            mincomponents = len(w.components)
+            minwidget = w
+    
+    summ=0
+    for i in range(len(minwidget.components),len(minwidget.componentStructure)):
+        if (i == len(minwidget.components)):
+            pl = curplace
+        else:
+            pl = minwidget.componentStructure[i-1]
+            
+        summ+=get_miles(pl, minwidget.componentStructure[i])
+        
+    return summ

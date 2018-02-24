@@ -31,11 +31,14 @@ def traceback(lastnode):
     return path
     
 
-def solve_min_stops(Widgets):
+def solve(Widgets, mileage=False):
     # heuristic: average number of parts needed to
     # complete each widget
     
-    print("Solving for minimum number of stops...")
+    if (mileage == False):
+        print("Solving for minimum number of stops...")
+    else:
+        print("Solving for minimum mileage...")
 
     frontier = []  # this will be a list of nodes
     
@@ -49,7 +52,7 @@ def solve_min_stops(Widgets):
         step+=1
         
         # decide what node to expand next
-        mineval = 9999
+        mineval = 99999999
         minnode = None
         for n in frontier:
             if (n.evaluation < mineval):
@@ -57,6 +60,7 @@ def solve_min_stops(Widgets):
                 minnode = n
         
         curWidgets = minnode.widgets
+
         
         if minnode.cost != prevcost:
             prevcost = minnode.cost
@@ -71,36 +75,54 @@ def solve_min_stops(Widgets):
         if (alldone == True):
             break
         
+        if (mileage == False):
+            newcost = [minnode.cost+1,minnode.cost+1,minnode.cost+1,minnode.cost+1,minnode.cost+1]
+        else:
+            newcost = [minnode.cost+inc.get_miles(minnode.value,'A'),
+                       minnode.cost+inc.get_miles(minnode.value,'B'),
+                       minnode.cost+inc.get_miles(minnode.value,'C'),
+                       minnode.cost+inc.get_miles(minnode.value,'D'),
+                       minnode.cost+inc.get_miles(minnode.value,'E')]
+            
         # generate new nodes
-        newNodeA = inc.Node('A',add_widget(curWidgets, 'A'), minnode.cost+1, minnode)
-        newNodeB = inc.Node('B',add_widget(curWidgets, 'B'), minnode.cost+1, minnode)
-        newNodeC = inc.Node('C',add_widget(curWidgets, 'C'), minnode.cost+1, minnode)
-        newNodeD = inc.Node('D',add_widget(curWidgets, 'D'), minnode.cost+1, minnode)
-        newNodeE = inc.Node('E',add_widget(curWidgets, 'E'), minnode.cost+1, minnode)
         
-        if (newNodeA.evaluation != mineval+1):  # ignore new states where nothing was accomplished
+        newNodeA = inc.Node('A',add_widget(curWidgets, 'A'), newcost[0], minnode, mileage)
+        newNodeB = inc.Node('B',add_widget(curWidgets, 'B'), newcost[1], minnode, mileage)
+        newNodeC = inc.Node('C',add_widget(curWidgets, 'C'), newcost[2], minnode, mileage)
+        newNodeD = inc.Node('D',add_widget(curWidgets, 'D'), newcost[3], minnode, mileage)
+        newNodeE = inc.Node('E',add_widget(curWidgets, 'E'), newcost[4], minnode, mileage)
+        
+        if (newNodeA.evaluation != mineval+1 and minnode.value != 'A'):  # ignore new states where nothing was accomplished
+                                                # only applies for minimum steps
             frontier.append(newNodeA)
-        if (newNodeB.evaluation != mineval+1):
+        if (newNodeB.evaluation != mineval+1 and minnode.value != 'B'):
             frontier.append(newNodeB)
-        if (newNodeC.evaluation != mineval+1):
+        if (newNodeC.evaluation != mineval+1 and minnode.value != 'C'):
             frontier.append(newNodeC)
-        if (newNodeD.evaluation != mineval+1):
+        if (newNodeD.evaluation != mineval+1 and minnode.value != 'D'):
             frontier.append(newNodeD)
-        if (newNodeE.evaluation != mineval+1):
+        if (newNodeE.evaluation != mineval+1 and minnode.value != 'E'):
             frontier.append(newNodeE)
         
         frontier.remove(minnode)
         
     path = traceback(minnode)
     
-    print("Path with minimum stops:")
+    if (mileage == False):
+        print("Path with minimum stops:")
+    else:
+        print("Path with least mileage:")
     pathstr = ""
     for n in path:
         pathstr+=n.value
     print(pathstr)
-    print("Stops:",minnode.cost)
+    if (mileage == False):
+        print("Stops:",minnode.cost)
+    else:
+        print("Miles:",minnode.cost)
     print("Nodes expanded:", step)
-        
+
+
     
 
 if __name__ == '__main__':
@@ -112,4 +134,5 @@ if __name__ == '__main__':
     
     Widgets = [Widget1, Widget2, Widget3, Widget4, Widget5] # container for passing to function
     
-    solve_min_stops(Widgets)
+    solve(Widgets)
+    solve(Widgets,True)
