@@ -13,8 +13,6 @@ class Minimax(Agent):
         self.expanded_nodes = 0
         self.type = 'minimax'
 
-   
-
     def evaluation(self, gameboard):
         """
         Estimate a utility score of one game state
@@ -50,6 +48,9 @@ class Minimax(Agent):
                 d2 = gameboard.check_diag_2_state(position)
 
                 for pattern in [h, v, d1, d2]:
+                    if pattern == []:
+                        continue
+                    
                     if pattern in five_stones:
                         score += 1000
                     elif pattern in five_opponent_stones:

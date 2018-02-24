@@ -2,6 +2,9 @@
 # -*- coding:utf-8 -*-
 
 
+import copy
+
+
 class Board(object):
     """
     A class used to represent game board of Gomoku.
@@ -21,9 +24,7 @@ class Board(object):
     def copy(self):
         """Copy function."""
         temp = Board(self.width, self.height)
-        temp.board = []
-        for line in self.board:
-            temp.board.append(line.copy())
+        temp.board = copy.deepcopy(self.board)
         return temp
 
     def terminate(self):
@@ -89,12 +90,11 @@ class Board(object):
         state = []
         x_pos = position[0]
         y_pos = position[1]
+        
+        if y_pos > self.width - 5:
+            return state
 
         for i in range(y_pos, y_pos + 5):
-            # not out of range
-            if i >= self.width:
-                break
-            
             char = self.board[x_pos][i]
             if char.islower():
                 state.append('red')
@@ -118,11 +118,10 @@ class Board(object):
         x_pos = position[0]
         y_pos = position[1]
 
+        if x_pos > self.height - 5:
+            return state
+
         for i in range(x_pos, x_pos + 5):
-            # not out of range
-            if i >= self.height:
-                break
-            
             char = self.board[i][y_pos]
             if char.islower():
                 state.append('red')
@@ -147,11 +146,10 @@ class Board(object):
         x_pos = position[0]
         y_pos = position[1]
 
-        for i in range(5):
-            # not out of range
-            if (x_pos + i >= self.height) or (y_pos + i >= self.width):
-                break
-            
+        if (x_pos > self.height - 5) or (y_pos > self.width - 5):
+            return state
+
+        for i in range(5):            
             char = self.board[x_pos + i][y_pos + i]
             if char.islower():
                 state.append('red')
@@ -176,11 +174,10 @@ class Board(object):
         x_pos = position[0]
         y_pos = position[1]
 
-        for i in range(5):
-            # not out of range
-            if (x_pos + i >= self.height) or (y_pos - i < 0):
-                break
-            
+        if (x_pos > self.height - 5) or (y_pos < 4):
+            return state
+
+        for i in range(5):            
             char = self.board[x_pos + i][y_pos - i]
             if char.islower():
                 state.append('red')
