@@ -26,7 +26,6 @@ class Agent(object):
             for i in range(ord('A'), ord('Z')+1):
                 self.steps.append(chr(i))
 
-
     def _all_valid_moves(self, gameboard):
         """
         Find all possible moves.
@@ -42,7 +41,6 @@ class Agent(object):
                 if gameboard.board[x][y] == '.':
                     moves.append((x,y))
         return moves
-
 
     def choose_move(self, moves):
         """ Choose a move from a list, which follows all rules.
@@ -75,5 +73,3 @@ class Agent(object):
 
         # Remove this marker
         self.steps.remove(char)
-
-        #print('{0} agent {1}-th move completed!'.format(self.color, self.count_step))
