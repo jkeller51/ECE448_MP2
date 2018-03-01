@@ -3,6 +3,7 @@
 
 
 from board import Board
+import numpy as np
 
 
 class Agent(object):
@@ -25,6 +26,7 @@ class Agent(object):
         elif color == 'blue':
             for i in range(ord('A'), ord('Z')+1):
                 self.steps.append(chr(i))
+        pass
 
     def _all_valid_moves(self, gameboard):
         """
@@ -55,6 +57,21 @@ class Agent(object):
         best_move = temp[0]
         return best_move
 
+    def random_move(self, gameboard):
+        """
+        Randomly choose a move
+
+        Args:
+            gameboard(Board): game board
+        Returns:
+            (None)
+        """
+        move = self._all_valid_moves(gameboard)
+        position_idx = np.random.choice(len(move), 1)[0]
+        position = move[position_idx]
+        self.make_move(position, gameboard)
+        pass
+
     def make_move(self, position, gameboard):
         """
         Make a move
@@ -73,3 +90,4 @@ class Agent(object):
 
         # Remove this marker
         self.steps.remove(char)
+        pass
