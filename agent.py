@@ -99,7 +99,7 @@ class Agent(object):
 
         moves = self._all_valid_moves(gameboard)
         if (result == 'UNFINISHED') and (len(moves) == 0):
-            result == 'tie'
+            result = 'tie'
 
         return result
     
@@ -129,7 +129,6 @@ class Agent(object):
         position_idx = np.random.choice(len(move), 1)[0]
         position = move[position_idx]
         self.make_move(position, gameboard)
-        pass
 
     def make_move(self, position, gameboard):
         """
