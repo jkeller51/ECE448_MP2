@@ -8,8 +8,8 @@ Created on Fri Feb 23 15:41:43 2018
 import include as inc
 import copy
 
-def add_widget(Widgets, value):
-    # add widget to a list of widgets
+def add_component(Widgets, value):
+    # add component to a list of widgets
     # don't worry, it won't add to a widget if it
     # is not the correct component
     newWidgets = copy.deepcopy(Widgets)
@@ -86,11 +86,11 @@ def solve(Widgets, mileage=False):
             
         # generate new nodes
         
-        newNodeA = inc.Node('A',add_widget(curWidgets, 'A'), newcost[0], minnode, mileage)
-        newNodeB = inc.Node('B',add_widget(curWidgets, 'B'), newcost[1], minnode, mileage)
-        newNodeC = inc.Node('C',add_widget(curWidgets, 'C'), newcost[2], minnode, mileage)
-        newNodeD = inc.Node('D',add_widget(curWidgets, 'D'), newcost[3], minnode, mileage)
-        newNodeE = inc.Node('E',add_widget(curWidgets, 'E'), newcost[4], minnode, mileage)
+        newNodeA = inc.Node('A',add_component(curWidgets, 'A'), newcost[0], minnode, mileage)
+        newNodeB = inc.Node('B',add_component(curWidgets, 'B'), newcost[1], minnode, mileage)
+        newNodeC = inc.Node('C',add_component(curWidgets, 'C'), newcost[2], minnode, mileage)
+        newNodeD = inc.Node('D',add_component(curWidgets, 'D'), newcost[3], minnode, mileage)
+        newNodeE = inc.Node('E',add_component(curWidgets, 'E'), newcost[4], minnode, mileage)
         
         if (newNodeA.evaluation != mineval+1 and minnode.value != 'A'):  # ignore new states where nothing was accomplished
                                                 # only applies for minimum steps
