@@ -20,7 +20,7 @@ if __name__ == '__main__':
     _blue_ = 0
 
     # Play
-    while not gameboard.terminate():
+    while (RED.win_lose_tie(gameboard) == 'UNFINISHED'):
         if _red_ == 1:
             pos = RED.find_move(gameboard)
             RED.make_move(pos, gameboard)

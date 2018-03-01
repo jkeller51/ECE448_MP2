@@ -27,56 +27,6 @@ class Board(object):
         temp.board = copy.deepcopy(self.board)
         return temp
 
-    def terminate(self):
-        """ Check if game terminates"""
-        if self.check_tie() or self.check_win():
-            return True
-        else:
-            return False
-
-    def check_tie(self):
-        """
-        Check if current state is a tie.
-
-        Args: (None)
-        Returns: (Boolean)
-        """
-        for line in self.board:
-            if '.' in line:
-                return False
-        return True
-
-    def check_win(self):
-        """
-        Check if either side wins
-
-        Args: (None)
-        Returns: (Boolean)
-        """
-        situation = [['red'] * 5,
-                     ['blue'] * 5]
-        
-        for x in range(self.height):
-            for y in range(self.width):
-                position = (x, y)
-                h = self.check_horizontal_state(position)
-                if h in situation:
-                    return True
-
-                v = self.check_vertical_state(position)
-                if v in situation:
-                    return True
-
-                d1 = self.check_diag_1_state(position)
-                if d1 in situation:
-                    return True
-
-                d2 = self.check_diag_2_state(position)
-                if d2 in situation:
-                    return True
-
-        return False
-
     def check_horizontal_state(self, position):
         """
         Check horizontal state for a position →
@@ -90,7 +40,8 @@ class Board(object):
         state = []
         x_pos = position[0]
         y_pos = position[1]
-        
+        
+
         if y_pos > self.width - 5:
             return state
 

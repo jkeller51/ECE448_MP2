@@ -44,6 +44,65 @@ class Agent(object):
                     moves.append((x,y))
         return moves
 
+    def win_lose_tie(self, gameboard):
+        """ Check the agent wins or loses or ties
+
+        Args:
+            gameboard(Board): game board
+        Returns:
+            result(str): 'win' or 'lose' or 'tie'
+        """
+        result = 'UNFINISHED'
+
+        # Define end state
+        _win_ = [self.color] * 5
+        _lose_ = [self.opponent_color] * 5
+        
+        for x in range(gameboard.height):
+            for y in range(gameboard.width):
+                position = (x, y)
+                # check horizontal state
+                h = gameboard.check_horizontal_state(position)
+                if h == _win_:
+                    result = 'win'
+                    break
+                elif h == _lose_:
+                    result = 'lose'
+                    break
+
+                # check vertical state
+                v = gameboard.check_vertical_state(position)
+                if v == _win_:
+                    result = 'win'
+                    break
+                elif v == _lose_:
+                    result = 'lose'
+                    break
+
+                # check 1st diagonal state
+                d1 = gameboard.check_diag_1_state(position)
+                if d1 == _win_:
+                    result = 'win'
+                    break
+                elif d1 == _lose_:
+                    result = 'lose'
+                    break
+
+                # check 2nd diagonal state
+                d2 = gameboard.check_diag_2_state(position)
+                if d2 == _win_:
+                    result = 'win'
+                    break
+                elif d2 == _lose_:
+                    result = 'lose'
+                    break
+
+        moves = self._all_valid_moves(gameboard)
+        if (result == 'UNFINISHED') and (len(moves) == 0):
+            result == 'tie'
+
+        return result
+    
     def choose_move(self, moves):
         """ Choose a move from a list, which follows all rules.
 
