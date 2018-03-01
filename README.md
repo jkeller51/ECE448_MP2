@@ -1,11 +1,14 @@
 Environment:
+
     Python 3
 
 Packages:
+
     time
     numpy
 
 Classes n' Methods:
+
     Board()
         | copy(): copy itself
         | print_board(): print out
