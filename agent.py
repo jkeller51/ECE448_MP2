@@ -44,6 +44,19 @@ class Agent(object):
                     moves.append((x,y))
         return moves
 
+
+    def  has_valid_move(self, gameboard):
+        """
+         Determine if there is at least one valid move that can be played.
+         If so, return True, else False. Similar to all_valid_moves()
+        """
+        for x in range(gameboard.height):
+            for y in range(gameboard.width):
+                if gameboard.board[x][y] == '.':
+                    return True 
+        return False
+    
+
     def win_lose_tie(self, gameboard):
         """ Check the agent wins or loses or ties
 
