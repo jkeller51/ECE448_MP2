@@ -28,6 +28,17 @@ class Layer:
                     newstates.append(cs)
         
         return Layer(newstates)
+    
+    def findState(self, wcount):
+        # find a state with the same wcount
+        # or return None
+        rstate = None
+        for s in self.states:
+            if s.widgetcount == wcount:
+                rstate = s
+                
+        return rstate
+        
         
 class State:
     # all actions are mutex. we only have one action per time step.
@@ -61,6 +72,15 @@ def add_component(Widgets, value):
         w.addComponent(value)
     return newWidgets
 
+def remove_component(Widgets, value):
+    # add component to a list of widgets
+    # don't worry, it won't add to a widget if it
+    # is not the correct component
+    newWidgets = copy.deepcopy(Widgets)
+    for w in newWidgets:
+        w.removeComponent(value)
+    return newWidgets
+
 
 def check_widgets_finished(layer):
     # returns true when it is possible to finish all widgets at this stage
@@ -70,6 +90,74 @@ def check_widgets_finished(layer):
     
     return False
 
+
+def print_path(path):
+    for state,idx in path:
+        print(str(idx)+":",state.widgetcount)
+        
+def print_frontier(frontier):
+    i=0
+    for state,idx,path in frontier:
+        print(state.widgetcount, idx)
+        print_path(path)
+        print("")
+        i+=1
+        if (i>5):
+            break
+
+def backtrace(layers,goal=[5,5,5,5,5]):
+    # find a valid path to the goal state
+    # using modified DFS
+    
+    currentidx = len(layers)-1
+    currentState = layers[currentidx].findState(goal)
+    
+    path = []
+    
+    frontier = [[currentState,currentidx, path]]
+    
+    while len(frontier) > 0:
+        # go back 1 layer
+        currentState = frontier[0][0]
+        currentidx = frontier[0][1]
+        path = frontier[0][2]
+        path.append([currentState, currentidx])
+        
+        frontier.pop(0)
+        if (currentidx == 0):
+            # we've reached the initial layer
+            # TODO: see if it satisfies constraints
+            # if not we will...
+            print("----- Path Found ------")
+            print_path(path)
+            print("")
+            
+            continue
+        previousStates = []
+        foundchildren = False
+        for i in ['A','B','C','D','E']:
+            tempwidgets = remove_component(currentState.widgets, i)
+            tempcount = [len(tempwidgets[0].components),
+                         len(tempwidgets[1].components),
+                         len(tempwidgets[2].components),
+                         len(tempwidgets[3].components),
+                         len(tempwidgets[4].components)]
+    
+            this_state = layers[currentidx-1].findState(tempcount)
+            if (this_state != None and this_state not in previousStates):
+                previousStates.append(this_state)
+                frontier.insert(0, [this_state,currentidx-1, copy.deepcopy(path)])
+                # insert at beginning (DFS)
+                foundchildren = True
+        if foundchildren == True:
+            pass
+        else:
+            print("No more children (idx=",currentidx,")")
+            break
+        
+
+        
+    return previousStates
 
 if __name__ == '__main__':
     Widget1 = inc.Widget("AEDCA")
@@ -92,4 +180,6 @@ if __name__ == '__main__':
         layers.append(layers[len(layers)-1].nextLayer())
     
     print("A solution has been found.")
+    
+    previous = backtrace(layers)
     

@@ -69,6 +69,25 @@ class Widget():
             #print("--> Could not add component! Check that it is the correct component.")
             return False
         
+    def removeComponent(self, component):
+        """
+        args
+            component : a character for the widget to remove
+            
+        return value:
+            True if component removed correctly
+            False if couldn't remove
+        """
+        if (len(self.components) == 0):
+            return False
+        if (self.components[len(self.components)-1] == component):
+            self.components.pop(len(self.components)-1)
+            if (self.components != self.componentStructure):
+                self.done=False
+            return True
+        else:
+            return False
+        
     def nextComponent(self):
         """
         Returns the next component this widget needs
