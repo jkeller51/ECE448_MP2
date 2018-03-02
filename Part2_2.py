@@ -73,4 +73,5 @@ if __name__ == '__main__':
     gameboard.print_board()
     end = time.time()
     print()
-    print('Time used: {0} minutes.'.format((end - start) / 60))
+    print('Time used: {0:.3f} minutes.'.format((end - start) / 60))
+    print('RED {0}s!'.format(RED.win_lose_tie(gameboard)))
