@@ -49,16 +49,24 @@ if __name__ == '__main__':
             pos = RED.find_move(gameboard)
             RED.make_move(pos, gameboard)
             red_moves += 1
-            print('red {0}-th move \t {1} nodes expanded'.format(
-                   red_moves, RED.expanded_nodes))
+            if RED.type == 'stochastic':
+                print('red {0}-th move \t {1} nodes expanded \t prob {2:.2f}'.format(
+                      red_moves, RED.expanded_nodes, RED.probability))
+            else:
+                print('red {0}-th move \t {1} nodes expanded'.format(
+                      red_moves, RED.expanded_nodes))
             RED.expanded_nodes = 0
 
         if _blue_ == 1:
-            pos = BLUE.find_move(gameboard)
+            pos = BLUE.find_move(gameboard, 10)
             BLUE.make_move(pos, gameboard)
             blue_moves += 1
-            print('blue {0}-th move \t {1} nodes expanded'.format(
-                   blue_moves, BLUE.expanded_nodes))
+            if BLUE.type == 'stochastic':
+                print('blue {0}-th move \t {1} nodes expanded \t prob {2:.2f}'.format(
+                      blue_moves, BLUE.expanded_nodes, BLUE.probability))
+            else:
+                print('red {0}-th move \t {1} nodes expanded'.format(
+                      blue_moves, BLUE.expanded_nodes))
             BLUE.expanded_nodes = 0
 
         _red_, _blue_ = _blue_, _red_
@@ -69,4 +77,4 @@ if __name__ == '__main__':
     end = time.time()
     print()
     print('Time used: {0:.3f} minutes.'.format((end - start) / 60))
-    print('RED {0}!'.format(RED.win_lose_tie(gameboard)))
+    print('RED {0}s!'.format(RED.win_lose_tie(gameboard)))

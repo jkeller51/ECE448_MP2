@@ -13,6 +13,7 @@ class Stochastic(Agent):
     def __init__(self, color):
         super().__init__(color)
         self.expanded_nodes = 0
+        self.probability = 0
         self.type = 'stochastic'
 
     def _policy(self, gameboard):
@@ -29,10 +30,12 @@ class Stochastic(Agent):
         moves = []
         
         # step 1, check going to win
-        for position in valid_moves:
-            temp = _reflex_.check_going_to_win(position, gameboard)
-            if len(temp) != 0:
-                moves += temp
+        for x in range(gameboard.height):
+            for y in range(gameboard.width):
+                position = (x, y)
+                temp = _reflex_.check_going_to_win(position, gameboard)
+                if len(temp) != 0:
+                    moves += temp
 
         if len(moves) > 0:
             idx = np.random.choice(len(moves), 1)[0]
@@ -40,10 +43,12 @@ class Stochastic(Agent):
             return best_move
         
         # step 2, check opponent 4
-        for position in valid_moves:
-            temp = _reflex_._alter_check_opponent_4(position, gameboard)
-            if len(temp) != 0:
-                moves += temp
+        for x in range(gameboard.height):
+            for y in range(gameboard.width):
+                position = (x, y)
+                temp = _reflex_._alter_check_opponent_4(position, gameboard)
+                if len(temp) != 0:
+                    moves += temp
         
         if len(moves) > 0:
             idx = np.random.choice(len(moves), 1)[0]
@@ -51,10 +56,12 @@ class Stochastic(Agent):
             return best_move
 
         # step 3, check opponent 3
-        for position in valid_moves:
-            temp = _reflex_.check_opponent_3(position, gameboard)
-            if len(temp) != 0:
-                moves += temp
+        for x in range(gameboard.height):
+            for y in range(gameboard.width):
+                position = (x, y)
+                temp = _reflex_.check_opponent_3(position, gameboard)
+                if len(temp) != 0:
+                    moves += temp
         
         if len(moves) > 0:
             idx = np.random.choice(len(moves), 1)[0]
@@ -62,10 +69,12 @@ class Stochastic(Agent):
             return best_move
 
         # step 4, winning blocks
-        for position in valid_moves:
-            temp = _reflex_.check_winning_blocks(position, gameboard)
-            if len(temp) != 0:
-                moves += temp
+        for x in range(gameboard.height):
+            for y in range(gameboard.width):
+                position = (x, y)
+                temp = _reflex_.check_winning_blocks(position, gameboard)
+                if len(temp) != 0:
+                    moves += temp
 
         if len(moves) > 0:
             moves = list(set(moves))
@@ -109,10 +118,10 @@ class Stochastic(Agent):
                 for state in [h, v, d1, d2]:
                     if ((state.count('red') + state.count('x') == 5)
                         and (state.count('red') > 0)):
-                        count['red'] += 1
+                        count['red'] += np.power(3, (state.count('red') - 1))
                     elif ((state.count('blue') + state.count('x') == 5)
                         and (state.count('blue') > 0)):
-                        count['blue'] += 1
+                        count['blue'] += np.power(3, (state.count('blue') - 1))
         return count
 
     def simulation(self, gameboard, N):
@@ -141,7 +150,7 @@ class Stochastic(Agent):
             _OPPONENT_ACTION_ = 0
 
             while ((_SELF_.win_lose_tie(gameboard_cpy) == 'UNFINISHED')
-                   and (depth <= MAX_DEPTH)):
+                   and (depth < MAX_DEPTH)):
                 if _SELF_ACTION_ == 1:
                     temp = _SELF_._policy(gameboard_cpy)
                     _SELF_.make_move(temp, gameboard_cpy)
@@ -154,21 +163,21 @@ class Stochastic(Agent):
 
                 depth += 1
 
-            result = self.win_lose_tie(gameboard_cpy)
+            result = _SELF_.win_lose_tie(gameboard_cpy)
             if result == 'win':
                 score += 1.0
             elif result == 'lose':
                 score += 0.0
             elif result == 'tie':
                 score += 0.5
-            elif depth > MAX_DEPTH:
-                count = self.count_winning_blocks(gameboard_cpy)
-                score += count[self.color] / (count[self.color] + count[self.opponent_color])
+            elif depth >= MAX_DEPTH:
+                count = _SELF_.count_winning_blocks(gameboard_cpy)
+                score += count[_SELF_.color] / (count[_SELF_.color] + count[_SELF_.opponent_color])
         
         avg_score = score / N
         return avg_score
 
-    def find_move(self, gameboard, N=100):
+    def find_move(self, gameboard, N=20):
         """
         Find next move
 
@@ -213,5 +222,6 @@ class Stochastic(Agent):
                 best_score = min_score
             if min_score > beta:
                 beta = min_score
-        
+
+        self.probability = best_score
         return best_move
