@@ -12,6 +12,7 @@ class Minimax(Agent):
         super().__init__(color)
         self.expanded_nodes = 0
         self.type = 'minimax'
+        self.best_move = None #global variable representing the best move possible
 
     def evaluation(self, gameboard):
         """
@@ -50,7 +51,8 @@ class Minimax(Agent):
                 for pattern in [h, v, d1, d2]:
                     if pattern == []:
                         continue
-                    
+                    
+
                     if pattern in five_stones:
                         score += 1000
                     elif pattern in five_opponent_stones:
@@ -68,7 +70,7 @@ class Minimax(Agent):
                     
         return score
 
-    def find_move(self, gameboard):
+    def find_move_old(self, gameboard):
         """
         Find next move, following the four steps.
 
@@ -120,3 +122,66 @@ class Minimax(Agent):
                 best_score = min_score
         
         return best_move
+
+
+
+    
+    def find_move1(self, gameboard, depth, limit):
+         
+        
+        if depth == limit or self.has_valid_move(gameboard) == False: #if we've reached our limit, or the gameboard is in a terminal state, then return a score.
+
+            self.expanded_nodes += 1 #***concerned about increasing count when we're at a terminal state.  
+            return self.evaluation(gameboard)
+
+        
+        else:
+            #we still want to keep on expanding the tree
+            
+            if (depth % 2 == 0): #we're at a max level
+
+                 best_value = float("-inf")
+                 moves = self._all_valid_moves(gameboard)
+                 
+                 
+                 for pos in moves:
+                     temp_board = gameboard.copy()
+                     temp_agent = Agent(self.color)
+                     temp_agent.make_move(pos, temp_board)
+                     #temp_moves = self._all_valid_moves(temp_board)
+                     #self.expanded_nodes += 1
+                     move_value = self.find_move1(temp_board, depth + 1, limit)
+                     if move_value > best_value:
+                         best_value = move_value
+                         self.best_move = pos
+                     #print(moves)
+                     #print("\n\n\n{} possible moves at this level".format(len(moves)))
+                 return best_value
+                         
+                    
+                
+            else: #if depth % 2 == 1, we're at a min level
+
+                 lowest_value = float("inf")
+                 moves = self._all_valid_moves(gameboard)
+                 
+                 for pos in moves:
+                    temp_board = gameboard.copy()
+                    temp_agent = Agent(self.opponent_color)
+                    temp_agent.make_move(pos, temp_board)
+                   #temp_moves = self._all_valid_moves(temp_board) #line of code unnecessary.
+                   #self.expanded_nodes += 1
+                    move_value =  self.find_move1(temp_board, depth + 1, limit)
+                    if move_value < lowest_value: #looking for the minimum score here, not max 
+                         lowest_value = move_value
+                         # self.best_move = pos #only store best move for max player. 
+                    #print(moves)
+                   #print("\n\n\n{} possible moves at this level".format(len(moves)))
+                 return lowest_value
+
+
+    def find_move(self, gameboard):
+        #recursive method
+        self.find_move1(gameboard, 0, 3)
+        #print("Expanded nodes = {}".format(self.expanded_nodes))
+        return self.best_move
