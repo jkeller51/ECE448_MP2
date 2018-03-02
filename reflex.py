@@ -100,6 +100,56 @@ class Reflex(Agent):
 
         return moves
 
+    def _alter_check_opponent_4(self, position, gameboard):
+        """ Check if opponent has got unbroken chain of 4 stones.
+
+        Args:
+            position(tuple): coordinates of current position to check
+            gameboard(Board): game board
+        Returns:
+            moves(list): list of tuples, recording positions to move
+        """
+        if self.color == 'red':
+            opponent_color = 'blue'
+        else:
+            opponent_color = 'red'
+            
+        x_pos = position[0]
+        y_pos = position[1]
+        moves = []        
+        situation = [['x'] + [opponent_color]*4,
+                     [opponent_color]*4 + ['x'],
+                     [opponent_color] + ['x'] + [opponent_color]*3,
+                     [opponent_color]*2 + ['x'] + [opponent_color]*2,
+                     [opponent_color]*3 + ['x'] + [opponent_color]] # What we should find here
+
+        # Check →
+        h = gameboard.check_horizontal_state(position)
+        if h in situation:
+            relative_loc = h.index('x')
+            moves.append((x_pos, y_pos + relative_loc))
+
+        # Check ↓
+        v = gameboard.check_vertical_state(position)
+        if v in situation:
+            relative_loc = v.index('x')
+            moves.append((x_pos + relative_loc, y_pos))
+
+        # Check ↘
+        d1 = gameboard.check_diag_1_state(position)
+        if d1 in situation:
+            relative_loc = d1.index('x')
+            moves.append((x_pos + relative_loc, y_pos + relative_loc))
+        
+        
+        # Check ↙
+        d2 = gameboard.check_diag_2_state(position)
+        if d2 in situation:
+            relative_loc = d2.index('x')
+            moves.append((x_pos + relative_loc, y_pos - relative_loc))
+
+        return moves
+
     def check_opponent_3(self, position, gameboard):
         """ Check if opponent has got unbroken chain of 3 stones and
         have spaces on both sides.
