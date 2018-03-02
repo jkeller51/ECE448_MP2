@@ -89,7 +89,31 @@ class Stochastic(Agent):
         # step 5, random pick one
         idx = np.random.choice(len(valid_moves), 1)[0]
         return valid_moves[idx]
-        
+
+    def count_winning_blocks(self, gameboard):
+        """ Count winning blocks for both sides
+
+        Args:
+            gameboard(Board): game board
+        Returns:
+            count(dict): key(str):color; value(int):number
+        """
+        count = {'red':0.1, 'blue':0.1}
+        for x in range(gameboard.height):
+            for y in range(gameboard.width):
+                position = (x, y)
+                h = gameboard.check_horizontal_state(position)
+                v = gameboard.check_vertical_state(position)
+                d1 = gameboard.check_diag_1_state(position)
+                d2 = gameboard.check_diag_2_state(position)
+                for state in [h, v, d1, d2]:
+                    if ((state.count('red') + state.count('x') == 5)
+                        and (state.count('red') > 0)):
+                        count['red'] += 1
+                    elif ((state.count('blue') + state.count('x') == 5)
+                        and (state.count('blue') > 0)):
+                        count['blue'] += 1
+        return count
 
     def simulation(self, gameboard, N):
         """
@@ -101,6 +125,7 @@ class Stochastic(Agent):
         Returns:
             avg_score: average evaluation score
         """
+        MAX_DEPTH = 6
         score = 0
 
         # Simulation N times
@@ -116,7 +141,7 @@ class Stochastic(Agent):
             _OPPONENT_ACTION_ = 0
 
             while ((_SELF_.win_lose_tie(gameboard_cpy) == 'UNFINISHED')
-                   and (depth <= 12)):
+                   and (depth <= MAX_DEPTH)):
                 if _SELF_ACTION_ == 1:
                     temp = _SELF_._policy(gameboard_cpy)
                     _SELF_.make_move(temp, gameboard_cpy)
@@ -136,8 +161,9 @@ class Stochastic(Agent):
                 score += 0.0
             elif result == 'tie':
                 score += 0.5
-            elif depth > 12:
-                score += 0.1
+            elif depth > MAX_DEPTH:
+                count = self.count_winning_blocks(gameboard_cpy)
+                score += count[self.color] / (count[self.color] + count[self.opponent_color])
         
         avg_score = score / N
         return avg_score
