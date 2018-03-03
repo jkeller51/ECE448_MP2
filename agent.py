@@ -162,3 +162,60 @@ class Agent(object):
         # Remove this marker
         self.steps.remove(char)
         pass
+
+
+    def evaluation(self, gameboard):
+        """
+        Estimate a utility score of one game state
+
+        Args:
+            gameboard(Board): game board
+        Returns:
+            score(int): score
+        """
+        score = 0
+        five_stones = [[self.color] * 5]
+        five_opponent_stones = [[self.opponent_color] * 5]
+        four_stones = [[self.color] * 4 + ['x'],
+                       [self.color] * 3 + ['x'] + [self.color],
+                       [self.color] * 2 + ['x'] + [self.color] * 2,
+                       [self.color] + ['x'] + [self.color] * 3,
+                       ['x'] + [self.color] * 4]
+        four_opponent_stones = [[self.opponent_color] * 4 + ['x'],
+                                [self.opponent_color] * 3 + ['x'] + [self.opponent_color],
+                                [self.opponent_color] * 2 + ['x'] + [self.opponent_color] * 2,
+                                [self.opponent_color] + ['x'] + [self.opponent_color] * 3,
+                                ['x'] + [self.opponent_color] * 4]
+        three_open = [['x'] + [self.color] * 3 + ['x']]
+        three_opponent_open = [['x'] + [self.opponent_color] * 3 + ['x']]
+
+        # Find patterns
+        for x in range(gameboard.height):
+            for y in range(gameboard.width):
+                position = (x, y)
+                h = gameboard.check_horizontal_state(position)
+                v = gameboard.check_vertical_state(position)
+                d1 = gameboard.check_diag_1_state(position)
+                d2 = gameboard.check_diag_2_state(position)
+
+                for pattern in [h, v, d1, d2]:
+                    if pattern == []:
+                        continue
+                    
+
+                    if pattern in five_stones:
+                        score += 1000
+                    elif pattern in five_opponent_stones:
+                        score -= 1000
+                    elif pattern in four_stones:
+                        score += 100
+                    elif pattern in four_opponent_stones:
+                        score -= 100
+                    elif pattern in three_open:
+                        score += 50
+                    elif pattern in three_opponent_open:
+                        score -= 50
+                    elif (pattern.count('x') + pattern.count(self.color) == 5):
+                        score += 1
+                    
+        return score
