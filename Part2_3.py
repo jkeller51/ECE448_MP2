@@ -47,9 +47,9 @@ if __name__ == '__main__':
     while (RED.win_lose_tie(gameboard) == 'UNFINISHED'):
         if _red_ == 1:
             if RED.type == 'stochastic':
-                pos = RED.find_move(gameboard, 10)
-            else:
-                pos = RED.find_move(gameboard)
+                pos = RED.find_move(gameboard, N=10)
+            elif RED.type == 'alpha_beta':
+                pos = RED.find_move(gameboard, depth=2)
             RED.make_move(pos, gameboard)
             red_moves += 1
             if RED.type == 'stochastic':
@@ -62,16 +62,16 @@ if __name__ == '__main__':
 
         if _blue_ == 1:
             if BLUE.type == 'stochastic':
-                pos = BLUE.find_move(gameboard, 10)
-            else:
-                pos = BLUE.find_move(gameboard)
+                pos = BLUE.find_move(gameboard, N=10)
+            elif BLUE.type == 'alpha_beta':
+                pos = BLUE.find_move(gameboard, depth=2)
             BLUE.make_move(pos, gameboard)
             blue_moves += 1
             if BLUE.type == 'stochastic':
                 print('blue {0}-th move \t {1} nodes expanded \t prob {2:.2f}'.format(
                       blue_moves, BLUE.expanded_nodes, BLUE.probability))
             else:
-                print('red {0}-th move \t {1} nodes expanded'.format(
+                print('blue {0}-th move \t {1} nodes expanded'.format(
                       blue_moves, BLUE.expanded_nodes))
             BLUE.expanded_nodes = 0
 

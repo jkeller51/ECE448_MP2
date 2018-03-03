@@ -13,9 +13,6 @@ class AlphaBeta(Agent):
         self.expanded_nodes = 0
         self.type = 'alpha_beta'
         self.track_sheet = [] #an array of tuples, where each tuple stores (move, movescore)
-    pass
-
-
 
        
     def find_move_helper(self, gameboard, depth, limit, alpha, beta):
@@ -106,7 +103,7 @@ class AlphaBeta(Agent):
                  return lowest_value
 
 
-    def find_move(self, gameboard):
+    def find_move(self, gameboard, depth=3):
 
         """
            Find the best move given the current position.
@@ -119,7 +116,7 @@ class AlphaBeta(Agent):
         """
 
         
-        self.find_move_helper(gameboard, 0, 3, float("-inf"), float("inf"))
+        self.find_move_helper(gameboard, 0, depth, float("-inf"), float("inf"))
         
         best_move = None
         best_score = float("-inf")
