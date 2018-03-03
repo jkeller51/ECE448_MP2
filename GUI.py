@@ -24,20 +24,29 @@ class Window(Frame):
 
 
        
-
+      
         #buttons representing the boxes of the game
         for i in range(self.gameBoard.height): #for each row
             for j in range(self.gameBoard.width): #for each column
                 test = "{},{}".format(i, j)
                 widgetName = "{row}+{column}".format(row = i, column = j) #used as unique identifier for each button
-                newButton = Button(self.master, text = test, name = widgetName).grid(row = i + 1, column = j + 1 )
+                newButton =  Button(self.master, text = test, name = widgetName)
+                newButton.bind('<Button-1>', printInfo)
+                newButton.grid(row = i + 1, column = j + 1 )
+                
+                print(type(newButton))
+                
+               
 
 
+   
 
         
         
-
-
+def printInfo(event):
+        print("Hello, it works!")
+       
+         
 
 root = Tk() #root window
 
