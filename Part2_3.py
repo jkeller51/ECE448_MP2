@@ -29,11 +29,14 @@ if __name__ == '__main__':
     # Initialize blue agent
     idx = input('Please choose a type for BLUE:\n'
                 '1. Stochastic\n'
-                '2. Alpha Beta\n')
+                '2. Alpha Beta\n'
+                '3. Reflex\n')
     if idx == '1':
         BLUE = Stochastic('blue')
     elif idx == '2':
         BLUE = AlphaBeta('blue')
+    elif idx == '3':
+        BLUE = Reflex('blue')
 
     # Mark order or two agents
     _red_ = 1
@@ -46,19 +49,33 @@ if __name__ == '__main__':
     # Play
     while (RED.win_lose_tie(gameboard) == 'UNFINISHED'):
         if _red_ == 1:
-            pos = RED.find_move(gameboard)
+            if RED.type == 'stochastic':
+                pos = RED.find_move(gameboard, 10)
+            else:
+                pos = RED.find_move(gameboard)
             RED.make_move(pos, gameboard)
             red_moves += 1
-            print('red {0}-th move \t {1} nodes expanded'.format(
-                   red_moves, RED.expanded_nodes))
+            if RED.type == 'stochastic':
+                print('red {0}-th move \t {1} nodes expanded \t prob {2:.2f}'.format(
+                      red_moves, RED.expanded_nodes, RED.probability))
+            else:
+                print('red {0}-th move \t {1} nodes expanded'.format(
+                      red_moves, RED.expanded_nodes))
             RED.expanded_nodes = 0
 
         if _blue_ == 1:
-            pos = BLUE.find_move(gameboard)
+            if BLUE.type == 'stochastic':
+                pos = BLUE.find_move(gameboard, 10)
+            else:
+                pos = BLUE.find_move(gameboard)
             BLUE.make_move(pos, gameboard)
             blue_moves += 1
-            print('blue {0}-th move \t {1} nodes expanded'.format(
-                   blue_moves, BLUE.expanded_nodes))
+            if BLUE.type == 'stochastic':
+                print('blue {0}-th move \t {1} nodes expanded \t prob {2:.2f}'.format(
+                      blue_moves, BLUE.expanded_nodes, BLUE.probability))
+            else:
+                print('red {0}-th move \t {1} nodes expanded'.format(
+                      blue_moves, BLUE.expanded_nodes))
             BLUE.expanded_nodes = 0
 
         _red_, _blue_ = _blue_, _red_
@@ -69,4 +86,4 @@ if __name__ == '__main__':
     end = time.time()
     print()
     print('Time used: {0:.3f} minutes.'.format((end - start) / 60))
-    print('RED {0}!'.format(RED.win_lose_tie(gameboard)))
+    print('RED {0}s!'.format(RED.win_lose_tie(gameboard)))
