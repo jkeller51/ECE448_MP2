@@ -200,9 +200,16 @@ class Stochastic(Agent):
             temp_agent.make_move(pos, temp_board)
             temp_moves = self._all_valid_moves(temp_board)
 
+            if temp_agent.win_lose_tie(temp_board) == 'win':
+                best_score = 1
+                best_move = pos
+                beta = float('inf')
+                break
+
             # min-agent, depth=2
             min_move = None
             min_score = float('inf')
+               
             for pos_2 in temp_moves:
                 temp_board_2 = temp_board.copy()
                 temp_agent_2 = Agent(self.opponent_color)

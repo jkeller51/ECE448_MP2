@@ -29,11 +29,14 @@ if __name__ == '__main__':
     # Initialize blue agent
     idx = input('Please choose a type for BLUE:\n'
                 '1. Stochastic\n'
-                '2. Alpha Beta\n')
+                '2. Alpha Beta\n'
+                '3. Reflex\n')
     if idx == '1':
         BLUE = Stochastic('blue')
     elif idx == '2':
         BLUE = AlphaBeta('blue')
+    elif idx == '3':
+        BLUE = Reflex('blue')
 
     # Mark order or two agents
     _red_ = 1
@@ -46,7 +49,10 @@ if __name__ == '__main__':
     # Play
     while (RED.win_lose_tie(gameboard) == 'UNFINISHED'):
         if _red_ == 1:
-            pos = RED.find_move(gameboard)
+            if RED.type == 'stochastic':
+                pos = RED.find_move(gameboard, 10)
+            else:
+                pos = RED.find_move(gameboard)
             RED.make_move(pos, gameboard)
             red_moves += 1
             if RED.type == 'stochastic':
@@ -58,7 +64,10 @@ if __name__ == '__main__':
             RED.expanded_nodes = 0
 
         if _blue_ == 1:
-            pos = BLUE.find_move(gameboard, 10)
+            if BLUE.type == 'stochastic':
+                pos = BLUE.find_move(gameboard, 10)
+            else:
+                pos = BLUE.find_move(gameboard)
             BLUE.make_move(pos, gameboard)
             blue_moves += 1
             if BLUE.type == 'stochastic':
