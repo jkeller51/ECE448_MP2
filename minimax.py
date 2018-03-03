@@ -12,17 +12,28 @@ class Minimax(Agent):
         super().__init__(color)
         self.expanded_nodes = 0
         self.type = 'minimax'
-        self.track_sheet = [] #an array of tuples, where each tuple stores (move, movescore)
+        self.track_sheet = [] #an array of tuples, where each tuple stores (move, move_score)
 
 
 
     
     def find_move_helper(self, gameboard, depth, limit):
-         
-        
-        if depth == limit or self.has_valid_move(gameboard) == False: #if we've reached our limit, or the gameboard is in a terminal state, then return a score.
+        """
+           Find best score associated with best move by recursively building game tree
 
-            self.expanded_nodes += 1 #***concerned about increasing count when we're at a terminal state.  
+           Args:
+           gameboard(Board): game board
+           depth(int): the current depth at which we're searching.
+           limit(int): a constant which represents maximum depth we search to.
+
+           Returns:
+           an evaluation score proprogated up the tree. 
+           
+        """
+        
+        if depth == limit or self.has_valid_move(gameboard) == False: 
+
+            self.expanded_nodes += 1  
             return self.evaluation(gameboard)
 
         
@@ -81,9 +92,19 @@ class Minimax(Agent):
 
 
     def find_move(self, gameboard):
-        #recursive method
+        """
+           Find the best move given the current position.
+
+           Args:
+           gameboard(Board): game board
+
+           Returns:
+           best_move(tuple): coordinates to place a stone 
+        """
         self.find_move_helper(gameboard, 0, 3)
-        
+
+
+        #we've generated tree and scored moves. Now find the best move.
         best_move = None
         best_score = float("-inf")
         
