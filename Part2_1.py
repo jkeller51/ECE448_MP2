@@ -34,5 +34,6 @@ if __name__ == '__main__':
     # Output
     print()
     gameboard.print_board()
+    print()
     print('RED {0}s!'.format(RED.win_lose_tie(gameboard)))
         
