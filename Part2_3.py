@@ -29,14 +29,11 @@ if __name__ == '__main__':
     # Initialize blue agent
     idx = input('Please choose a type for BLUE:\n'
                 '1. Stochastic\n'
-                '2. Alpha Beta\n'
-                '3. Reflex\n')
+                '2. Alpha Beta\n')
     if idx == '1':
         BLUE = Stochastic('blue')
     elif idx == '2':
         BLUE = AlphaBeta('blue')
-    elif idx == '3':
-        BLUE = Reflex('blue')
 
     # Mark order or two agents
     _red_ = 1
