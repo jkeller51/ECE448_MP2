@@ -8,6 +8,7 @@ Created on Thu Mar  1 12:44:45 2018
 import include as inc
 import copy
 
+MINMILES=5710
 
 class Layer:
     # layer contains all possible states at that step
@@ -21,21 +22,24 @@ class Layer:
             for cs in children:
                 add = True
                 for a in newstates:
-                    if (a.widgetcount == cs.widgetcount):
+                    if (a.widgetcount == cs.widgetcount and a.location == cs.location):
                         add=False
+                        a.previousStates.append(s)
                         break
                 if (add == True):
                     newstates.append(cs)
+                    cs.previousStates.append(s)
         
         return Layer(newstates)
     
-    def findState(self, wcount):
-        # find a state with the same wcount
+    def findState(self, wcount, loc):
+        # find a state with the same wcount and location
         # or return None
         rstate = None
         for s in self.states:
-            if s.widgetcount == wcount:
+            if s.widgetcount == wcount and s.location == loc:
                 rstate = s
+                break
                 
         return rstate
         
@@ -43,24 +47,25 @@ class Layer:
 class State:
     # all actions are mutex. we only have one action per time step.
     
-    def __init__(self, widgets):
+    def __init__(self, widgets, location):
+        self.location = location
         self.widgets = widgets
         self.widgetcount = [len(widgets[0].components),
                             len(widgets[1].components),
                             len(widgets[2].components),
                             len(widgets[3].components),
                             len(widgets[4].components)]
+        self.previousStates = []
         
     def generateChildren(self):
-        newStateA = State(add_component(self.widgets, 'A'))
-        newStateB = State(add_component(self.widgets, 'B'))
-        newStateC = State(add_component(self.widgets, 'C'))
-        newStateD = State(add_component(self.widgets, 'D'))
-        newStateE = State(add_component(self.widgets, 'E'))
-        return [newStateA, newStateB, newStateC, newStateD, newStateE]
+        childstates = []
+        for i in ['A','B','C','D','E']:
+            if i != self.location:  # we don't waste time with duplicate states
+                childstates.append(State(add_component(self.widgets, i),i))
+        return childstates
     
     def printState(self):
-        print(self.widgetcount)
+        print(self.location,self.widgetcount)
     
     
 def add_component(Widgets, value):
@@ -95,6 +100,20 @@ def print_path(path):
     for state,idx in path:
         print(str(idx)+":",state.widgetcount)
         
+def print_path_steps(path):
+    newpath = path[::-1]
+    for state,idx in newpath:
+        if (idx == 0):
+            continue
+        
+                
+        print("A"+str(idx)+": Go to",state.location)
+        print("S"+str(idx)+":",state.widgetcount)
+#        print("---->previous: ")
+#        for s in state.previousStates:
+#            s.printState()
+        
+        
 def print_frontier(frontier):
     i=0
     for state,idx,path in frontier:
@@ -104,17 +123,43 @@ def print_frontier(frontier):
         i+=1
         if (i>5):
             break
+        
+def path_mileage(path):
+    mileage=0
+    newpath = path[::-1]
+    q=0
+    for state,idx in newpath:
+        if (q == 0):
+            lastplace=''
+            q+=1
+            continue
+            
+        if (state.location == ''):
+            pass
+        else:
+#            print(lastplace+"->"+state.location,inc.get_miles(lastplace,state.location))
+            mileage+=inc.get_miles(lastplace,state.location)
+            lastplace=state.location
+        
+    return mileage
 
 def backtrace(layers,goal=[5,5,5,5,5]):
     # find a valid path to the goal state
     # using modified DFS
     
     currentidx = len(layers)-1
-    currentState = layers[currentidx].findState(goal)
+    
     
     path = []
+    foundsolution=False
+    minmiles = 999999
     
-    frontier = [[currentState,currentidx, path]]
+    frontier = []
+    
+    for i in ['A','B','C','D','E']:
+        currentState = layers[currentidx].findState(goal,i)
+        if (currentState != None):
+            frontier.append([currentState,currentidx, path])
     
     while len(frontier) > 0:
         # go back 1 layer
@@ -124,41 +169,53 @@ def backtrace(layers,goal=[5,5,5,5,5]):
         path.append([currentState, currentidx])
         
         frontier.pop(0)
+        
+        miles = path_mileage(path)
+        if (miles > minmiles):
+            continue
         if (currentidx == 0):
             # we've reached the initial layer
-            # TODO: see if it satisfies constraints
-            # if not we will...
             print("----- Path Found ------")
-            print_path(path)
-            print("")
+            print("Mileage:",miles)
+            print("Steps:", len(path))
+            #print_path_steps(path)
+            if (miles < minmiles):
+                minmiles = miles
             
-            continue
-        previousStates = []
-        foundchildren = False
-        for i in ['A','B','C','D','E']:
-            tempwidgets = remove_component(currentState.widgets, i)
-            tempcount = [len(tempwidgets[0].components),
-                         len(tempwidgets[1].components),
-                         len(tempwidgets[2].components),
-                         len(tempwidgets[3].components),
-                         len(tempwidgets[4].components)]
+            if (miles > MINMILES):
+                #we know from 1-1 that this is the minimum
+            
+                continue
+            else:
+                foundsolution=True
+                break
+        
+        
+        for s in currentState.previousStates:
+            frontier.insert(0, [s,currentidx-1, copy.copy(path)])
+            # insert at beginning (DFS)
     
-            this_state = layers[currentidx-1].findState(tempcount)
-            if (this_state != None and this_state not in previousStates):
-                previousStates.append(this_state)
-                frontier.insert(0, [this_state,currentidx-1, copy.deepcopy(path)])
-                # insert at beginning (DFS)
-                foundchildren = True
-        if foundchildren == True:
-            pass
-        else:
-            print("No more children (idx=",currentidx,")")
-            break
+
+    if (foundsolution == True):
+        return path
+    else:
+        return None
+    
+        
+def mileage_chars(inp):
+    summ=0
+    for i in range(1,len(inp)):
+        summ+=inc.get_miles(inp[i-1],inp[i])
+#        print(inp[i-1]+"->"+inp[i],inc.get_miles(inp[i-1],inp[i]))
+    return summ
         
 
-        
-    return previousStates
-
+def print_previous(state):
+    print("Previous States:")
+    for s in state.previousStates:
+        s.printState()
+    
+    
 if __name__ == '__main__':
     Widget1 = inc.Widget("AEDCA")
     Widget2 = inc.Widget("BEACD")
@@ -169,17 +226,27 @@ if __name__ == '__main__':
     Widgets = [Widget1, Widget2, Widget3, Widget4, Widget5] # container for passing to function
     
     layers = []
-    InitState = State(Widgets)
+    InitState = State(Widgets,'')
     InitLayer = Layer([InitState])
     
     layers.append(InitLayer)
+    asolution = False
     
     while True:
-        if (check_widgets_finished(layers[len(layers)-1])):
-            break
+        if (check_widgets_finished(layers[len(layers)-1]) and asolution==False):
+            asolution=True
+            print("Minimum step solution found.")
+        
+        if (asolution == True and len(layers) == 18):
+            print("Backtracing")
+            result = backtrace(layers)
+#            custombacktrace(layers)
+            if (result != None):
+                break
+            
         layers.append(layers[len(layers)-1].nextLayer())
+        print(len(layers))
     
-    print("A solution has been found.")
     
-    previous = backtrace(layers)
-    
+    print("Problem solved.")
+    print_path_steps(result)

@@ -3,6 +3,22 @@
 Created on Fri Feb 23 15:41:43 2018
 
 @author: jkell
+
+====== Solution: =======
+Solving for minimum number of stops...
+Path with minimum stops:
+BDAEDCBACDE
+Stops: 11
+Nodes expanded: 17076
+
+
+Solving for minimum mileage...
+Path with least mileage:
+DEBEAEDECEBEDECEA
+Miles: 5710
+Nodes expanded: 2670
+=========================
+    
 """
 
 import include as inc
