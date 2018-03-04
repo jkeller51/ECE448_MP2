@@ -162,6 +162,7 @@ class Stochastic(Agent):
                 _SELF_ACTION_, _OPPONENT_ACTION_ = _OPPONENT_ACTION_, _SELF_ACTION_
 
                 depth += 1
+                self.expanded_nodes += 1
 
             result = _SELF_.win_lose_tie(gameboard_cpy)
             if result == 'win':
@@ -216,7 +217,6 @@ class Stochastic(Agent):
                 temp_agent_2.make_move(pos_2, temp_board_2)
                 
                 score = self.simulation(temp_board_2, N)
-                self.expanded_nodes += 1
 
                 if score < min_score:
                     min_move = pos_2
