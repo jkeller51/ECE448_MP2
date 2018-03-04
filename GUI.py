@@ -21,34 +21,35 @@ class GomokuButton(Button):
 
 
 class GameManager():
+    """
+       Human vs Computer driver. This class manages a single game. 
+    """
     def __init__(self, gameboard, buttons, buttonColor,  label):
         self.board = gameboard
-      
+
+        #values set to None will be replaced when user chooses color (e.g. red or blue).
         
-        self.playerColor = "red"
+        self.gameStarted = False #keep track of if game has begun. 
+        
+        self.playerColor = None #should be set to red or blue
         
         self.playerTurn = None #should be set to true or false
 
-        if self.playerColor == "red": #determine who goes first. 
-            self.playerTurn = True  #it's the human player's turn to play.
-        else:
-            self.playerTurn = False
+        self.computerAgent = None #should be set to alphabeta or reflex or some other agent other than human. 
             
-        self.humanAgent = Human(self.playerColor)
+        self.humanAgent = None
+
+        
+
         self.gameSquares = buttons
         self.gameLabel = label #label to give updates to the player. 
         self.gameDone = False
         
        
 
-        #set the computer's color.
-        computerColor = None
-        if self.playerColor == "red":
-            computerColor = "blue"
-        else:
-            computerColor = "red"
+        
             
-        self.computerAgent = AlphaBeta(computerColor)
+        self.computerAgent = None
         self.computerPreviousSquare  = None #the last square the computer played on. 
         self.originalBackgroundColor = buttonColor #refers to button colors
 
@@ -56,7 +57,9 @@ class GameManager():
 
 
     def playRound(self, event):
-
+        
+       if self.gameStarted == False:
+           return; 
 
        #we check to see if game is done before either player is allowed to move
        if (self.gameDone == False):
@@ -156,7 +159,7 @@ class GameManager():
  
             self.gameLabel.config(text= "The computer is thinking...")
         
-            compMove = self.computerAgent.find_move(self.board, depth = 2)
+            compMove = self.computerAgent.find_move(self.board, depth = 2) #depth controls how far we should search
             print("The computer's move is {}, {}".format(compMove[0], compMove[1]))
             self.computerAgent.make_move(compMove, self.board)
             moveID = "{x}+{y}".format(x = compMove[0], y =  compMove[1])
@@ -210,7 +213,7 @@ class Window(Frame):
        
             
         #label to give game updates
-        self.gameStatusLabel = Label(self.master, text="Play your first move")
+        self.gameStatusLabel = Label(self.master, text="Play as...")
         labelfont = ('times', 20, 'bold')
         self.gameStatusLabel.config(font = labelfont)
         
@@ -224,8 +227,14 @@ class Window(Frame):
         self.gameStatusLabel.grid(row = 0, column = 0)
        
 
+        self.humanPlayer = None
       
-        
+        self.var = IntVar() #variable to store human color
+
+        self.RB1 = Radiobutton(self.master, text="Red", variable=self.var, value=1, command=self.setHumanColor)
+        self.RB1.grid(row = 1)
+        self.RB2 = Radiobutton(self.master, text="Blue", variable=self.var, value=2, command=self.setHumanColor)
+        self.RB2.grid(row = 2)
         
         #buttons representing the boxes of the game
         for i in range(self.gameBoard.height): #for each row  
@@ -236,18 +245,51 @@ class Window(Frame):
                 newButton.config(font = ('times', 20), height = 1, width = 3) #beautify the game squares. 
                 buttonList.append(newButton)
                 newButton.bind('<Button-1>', self.manager.playRound)
-                newButton.grid(row = i + 1, column = j + 1 )
+                newButton.grid(row = i + 2, column = j + 1 )
 
         
-        #After building GUI, check who's turn it is to play. If it's computer, prompt its first move. 
-        if self.manager.playerTurn == False: 
+        
+
+    def setHumanColor(self):
+        """
+          Determine user's color based on radio box selection. 
+        """
+        print("You selected {}".format(self.var.get()))
+        compColor = ""
+        
+        if self.var.get() == 1:
+            self.manager.playerColor = "red"
+            compColor = "blue"
+            self.manager.playerTurn = True
+            self.gameStatusLabel.config(text = "Your turn to move")
+            
+            
+        elif self.var.get() == 2:
+            self.manager.playerColor = "blue"
+            compColor = "red"
+            self.manager.playerTurn = False
+
+                                     
+        self.manager.gameStarted = True
+        self.RB1.grid_forget() #remove options. User already made choice. 
+        self.RB2.grid_forget()
+
+        #initialize players according to color
+        self.manager.humanAgent = Human(self.manager.playerColor)
+        self.manager.computerAgent = AlphaBeta(compColor)
+
+        #After building GUI and seeing if player is red or blue, check who's turn it is to play. If it's computer, prompt its first move. 
+        if self.manager.playerTurn == False and self.manager.gameStarted == True: 
             self.manager.computerMove() #in this case, the computer move first
+        
+
+
+        
             
            
-               
 
 
-   
+          
 
         
         
