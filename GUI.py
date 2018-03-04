@@ -1,6 +1,10 @@
-#Notes: Gomoku GUI program
-#Can add menu to allow you to choose either x or o (red or blue respectively)
-#
+#!usr/bin/env python3
+# -*- coding:utf-8 -*
+
+
+#Gomoku GUI program
+#Can extend by adding menu item to allow you to choose difficulty level
+
 
 
 from tkinter import *
