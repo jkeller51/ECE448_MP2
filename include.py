@@ -134,6 +134,7 @@ def minimum_miles_needed(Widgets,curplace):
         else:
             pl = minwidget.componentStructure[i-1]
             
-        summ+=get_miles(pl, minwidget.componentStructure[i])
+        #summ+=get_miles(pl, minwidget.componentStructure[i])
+        summ+=get_miles(pl, minwidget.componentStructure[i])*.75
         
     return summ

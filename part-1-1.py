@@ -14,9 +14,9 @@ Nodes expanded: 17076
 
 Solving for minimum mileage...
 Path with least mileage:
-DEBEAEDECEBEDECEA
-Miles: 5710
-Nodes expanded: 2670
+DEBEACEDEBECAED
+Miles: 5594
+Nodes expanded: 12505
 =========================
     
 """
@@ -151,4 +151,5 @@ if __name__ == '__main__':
     Widgets = [Widget1, Widget2, Widget3, Widget4, Widget5] # container for passing to function
     
     solve(Widgets)
+    print()
     solve(Widgets,True)

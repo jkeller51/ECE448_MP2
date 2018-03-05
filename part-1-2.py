@@ -175,9 +175,9 @@ def backtrace(layers,goal=[5,5,5,5,5]):
             continue
         if (currentidx == 0):
             # we've reached the initial layer
-            print("----- Path Found ------")
-            print("Mileage:",miles)
-            print("Steps:", len(path))
+#            print("----- Path Found ------")
+#            print("Mileage:",miles)
+#            print("Steps:", len(path))
             #print_path_steps(path)
             if (miles < minmiles):
                 minmiles = miles
@@ -237,16 +237,18 @@ if __name__ == '__main__':
             asolution=True
             print("Minimum step solution found.")
         
-        if (asolution == True and len(layers) == 18):
-            print("Backtracing")
+        if (asolution == True):
+            print("Backtracing layer",len(layers)-1)
+            print("Fluents:", len(layers[len(layers)-1].states))
+            print()
             result = backtrace(layers)
 #            custombacktrace(layers)
             if (result != None):
                 break
             
         layers.append(layers[len(layers)-1].nextLayer())
-        print(len(layers))
     
     
     print("Problem solved.")
     print_path_steps(result)
+    print("Mileage:",path_mileage(result))
