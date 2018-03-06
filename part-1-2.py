@@ -8,7 +8,7 @@ Created on Thu Mar  1 12:44:45 2018
 import include as inc
 import copy
 
-MINMILES=5710
+MINMILES=5594
 
 class Layer:
     # layer contains all possible states at that step
@@ -78,7 +78,7 @@ def add_component(Widgets, value):
     return newWidgets
 
 def remove_component(Widgets, value):
-    # add component to a list of widgets
+    # remove component to a list of widgets
     # don't worry, it won't add to a widget if it
     # is not the correct component
     newWidgets = copy.deepcopy(Widgets)
@@ -100,6 +100,13 @@ def print_path(path):
     for state,idx in path:
         print(str(idx)+":",state.widgetcount)
         
+def print_path_short(path):
+    path=path[::-1]
+    st = ""
+    for state,idx in path:
+        st = st+state.location
+    return st
+        
 def print_path_steps(path):
     newpath = path[::-1]
     for state,idx in newpath:
@@ -114,17 +121,18 @@ def print_path_steps(path):
 #            s.printState()
         
         
-def print_frontier(frontier):
-    i=0
-    for state,idx,path in frontier:
-        print(state.widgetcount, idx)
-        print_path(path)
-        print("")
-        i+=1
-        if (i>5):
-            break
+#def print_frontier(frontier):
+#    i=0
+#    for state,idx,path in frontier:
+#        print(state.widgetcount, idx)
+#        print_path(path)
+#        print("")
+#        i+=1
+#        if (i>5):
+#            break
         
 def path_mileage(path):
+    # return the total mileage of the input path
     mileage=0
     newpath = path[::-1]
     q=0
@@ -157,10 +165,11 @@ def backtrace(layers,goal=[5,5,5,5,5]):
     frontier = []
     
     for i in ['A','B','C','D','E']:
+        # add all possible goal states to the frontier
         currentState = layers[currentidx].findState(goal,i)
         if (currentState != None):
-            frontier.append([currentState,currentidx, path])
-    
+            frontier.append([currentState,currentidx, copy.copy(path)])
+            
     while len(frontier) > 0:
         # go back 1 layer
         currentState = frontier[0][0]
@@ -170,12 +179,15 @@ def backtrace(layers,goal=[5,5,5,5,5]):
         
         frontier.pop(0)
         
+        
         miles = path_mileage(path)
         if (miles > minmiles):
             continue
+            
         if (currentidx == 0):
             # we've reached the initial layer
 #            print("----- Path Found ------")
+#            print(print_path_short(path))
 #            print("Mileage:",miles)
 #            print("Steps:", len(path))
             #print_path_steps(path)
@@ -184,7 +196,6 @@ def backtrace(layers,goal=[5,5,5,5,5]):
             
             if (miles > MINMILES):
                 #we know from 1-1 that this is the minimum
-            
                 continue
             else:
                 foundsolution=True
@@ -202,21 +213,22 @@ def backtrace(layers,goal=[5,5,5,5,5]):
         return None
     
         
-def mileage_chars(inp):
-    summ=0
-    for i in range(1,len(inp)):
-        summ+=inc.get_miles(inp[i-1],inp[i])
-#        print(inp[i-1]+"->"+inp[i],inc.get_miles(inp[i-1],inp[i]))
-    return summ
+#def mileage_chars(inp):
+#    summ=0
+#    for i in range(1,len(inp)):
+#        summ+=inc.get_miles(inp[i-1],inp[i])
+##        print(inp[i-1]+"->"+inp[i],inc.get_miles(inp[i-1],inp[i]))
+#    return summ
         
 
-def print_previous(state):
-    print("Previous States:")
-    for s in state.previousStates:
-        s.printState()
+#def print_previous(state):
+#    print("Previous States:")
+#    for s in state.previousStates:
+#        s.printState()
     
     
 if __name__ == '__main__':
+    # create widgets
     Widget1 = inc.Widget("AEDCA")
     Widget2 = inc.Widget("BEACD")
     Widget3 = inc.Widget("BABCE")
@@ -232,23 +244,28 @@ if __name__ == '__main__':
     layers.append(InitLayer)
     asolution = False
     
+    # main loop
+    
     while True:
         if (check_widgets_finished(layers[len(layers)-1]) and asolution==False):
+            # this is the first layer with a possible solution
             asolution=True
-            print("Minimum step solution found.")
+            print("Minimum step solution found ("+str(len(layers)-1)+")")
         
         if (asolution == True):
+            # after we've found a possible solution layer, start backtracing each layer
             print("Backtracing layer",len(layers)-1)
             print("Fluents:", len(layers[len(layers)-1].states))
             print()
             result = backtrace(layers)
-#            custombacktrace(layers)
             if (result != None):
                 break
+            
             
         layers.append(layers[len(layers)-1].nextLayer())
     
     
-    print("Problem solved.")
-    print_path_steps(result)
-    print("Mileage:",path_mileage(result))
+    if (result != None):
+        print("Problem solved.")
+        print_path_steps(result)
+        print("Mileage:",path_mileage(result))
