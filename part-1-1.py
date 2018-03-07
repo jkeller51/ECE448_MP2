@@ -14,9 +14,9 @@ Nodes expanded: 17076
 
 Solving for minimum mileage...
 Path with least mileage:
-DEBEACEDEBECAED
-Miles: 5594
-Nodes expanded: 12505
+DEBEAEDEBECAEBED
+Miles: 5473
+Nodes expanded: 9104
 =========================
     
 """

@@ -11,6 +11,13 @@ mileageTable = [[0, 1064, 673, 1401, 277],
                 [1401, 1934, 1001, 0, 387],
                 [277, 337, 399, 387, 0]]
 
+minMileageTable = [[0, 614, 673, 664, 277],
+                   [614, 0, 736, 724, 337],
+                   [673, 736, 0, 786, 399],
+                   [661, 724, 786, 0, 387],
+                   [277, 337, 399, 387, 0]]
+
+
 class Node():
     
     
@@ -113,6 +120,14 @@ def get_miles(start, end):
     end_int = ord(end) - ord('A')
     
     return mileageTable[start_int][end_int]
+
+def get_min_miles(start, end):
+    if (start == ''):
+        return 0
+    start_int = ord(start)-ord('A')
+    end_int = ord(end) - ord('A')
+    
+    return minMileageTable[start_int][end_int]
     
 def minimum_miles_needed(Widgets,curplace):
     """
@@ -134,7 +149,31 @@ def minimum_miles_needed(Widgets,curplace):
         else:
             pl = minwidget.componentStructure[i-1]
             
-        #summ+=get_miles(pl, minwidget.componentStructure[i])
-        summ+=get_miles(pl, minwidget.componentStructure[i])*.75
+        summ+=get_min_miles(pl, minwidget.componentStructure[i])
         
     return summ
+
+#def minimum_miles_needed(Widgets,curplace):
+#    """
+#    Find the widget that needs the most parts
+#    and add up the mileage to get the parts
+#    for just that widget
+#    """
+#    mincomponents=99
+#    minwidget = None
+#    for w in Widgets:
+#        if (len(w.components) < mincomponents):
+#            mincomponents = len(w.components)
+#            minwidget = w
+#    
+#    summ=0
+#    for i in range(len(minwidget.components),len(minwidget.componentStructure)):
+#        if (i == len(minwidget.components)):
+#            pl = curplace
+#        else:
+#            pl = minwidget.componentStructure[i-1]
+#            
+#        #summ+=get_miles(pl, minwidget.componentStructure[i])
+#        summ+=277 # minimum miles you'll have to travel per step
+#        
+#    return summ

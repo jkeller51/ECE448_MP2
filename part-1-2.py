@@ -8,7 +8,7 @@ Created on Thu Mar  1 12:44:45 2018
 import include as inc
 import copy
 
-MINMILES=5594
+MINMILES=5473 # from 1-1
 
 class Layer:
     # layer contains all possible states at that step
@@ -162,6 +162,8 @@ def backtrace(layers,goal=[5,5,5,5,5]):
     foundsolution=False
     minmiles = 999999
     
+    minpath=[]
+    
     frontier = []
     
     for i in ['A','B','C','D','E']:
@@ -193,6 +195,7 @@ def backtrace(layers,goal=[5,5,5,5,5]):
             #print_path_steps(path)
             if (miles < minmiles):
                 minmiles = miles
+                minpath=path
             
             if (miles > MINMILES):
                 #we know from 1-1 that this is the minimum
@@ -210,15 +213,15 @@ def backtrace(layers,goal=[5,5,5,5,5]):
     if (foundsolution == True):
         return path
     else:
-        return None
+        return minpath
     
         
-#def mileage_chars(inp):
-#    summ=0
-#    for i in range(1,len(inp)):
-#        summ+=inc.get_miles(inp[i-1],inp[i])
-##        print(inp[i-1]+"->"+inp[i],inc.get_miles(inp[i-1],inp[i]))
-#    return summ
+def mileage_chars(inp):
+    summ=0
+    for i in range(1,len(inp)):
+        summ+=inc.get_miles(inp[i-1],inp[i])
+#        print(inp[i-1]+"->"+inp[i],inc.get_miles(inp[i-1],inp[i]))
+    return summ
         
 
 #def print_previous(state):
@@ -255,17 +258,27 @@ if __name__ == '__main__':
         if (asolution == True):
             # after we've found a possible solution layer, start backtracing each layer
             print("Backtracing layer",len(layers)-1)
-            print("Fluents:", len(layers[len(layers)-1].states))
-            print()
+            # calculate # fluents
+            fluents=[]
+            for s in layers[len(layers)-1].states:
+                for i in range(len(s.widgetcount)):
+                    if ((i, s.widgetcount[i]) not in fluents):
+                        fluents.append((i, s.widgetcount[i]))
+            
+            print("Fluents:", len(fluents))
             result = backtrace(layers)
-            if (result != None):
+            print("Shortest Path:", print_path_short(result))
+            print("Mileage:",path_mileage(result))
+            print()
+            if (len(layers) == 18):
                 break
             
             
         layers.append(layers[len(layers)-1].nextLayer())
     
+    print("Done.")
     
-    if (result != None):
-        print("Problem solved.")
-        print_path_steps(result)
-        print("Mileage:",path_mileage(result))
+#    if (result != None):
+#        print("Problem solved.")
+#        print_path_steps(result)
+#        print("Mileage:",path_mileage(result))
