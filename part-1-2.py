@@ -4,9 +4,48 @@ Created on Thu Mar  1 12:44:45 2018
 
 @author: jkell
 """
+"""
+====== Solution: =======
+Minimum step solution found (11)
+Backtracing layer 11
+Fluents: 30
+Shortest Path: DABEDCABCED
+Mileage: 7671
 
+Backtracing layer 12
+Fluents: 30
+Shortest Path: DEBAEDCBACED
+Mileage: 6934
+
+Backtracing layer 13
+Fluents: 30
+Shortest Path: BEDCAEDEBCAED
+Mileage: 6081
+
+Backtracing layer 14
+Fluents: 30
+Shortest Path: DEBEACEDEBCAED
+Mileage: 5816
+
+Backtracing layer 15
+Fluents: 30
+Shortest Path: DEBEACEDEBECAED
+Mileage: 5594
+
+Backtracing layer 16
+Fluents: 30
+Shortest Path: DEBEAEDEBECAEBED
+Mileage: 5473
+
+Backtracing layer 17
+Fluents: 30
+Shortest Path: DEBEAEDEBECEBEAED
+Mileage: 5476
+===================================
+"""
 import include as inc
 import copy
+import matplotlib.pyplot as plt
 
 MINMILES=5473 # from 1-1
 
@@ -247,6 +286,9 @@ if __name__ == '__main__':
     layers.append(InitLayer)
     asolution = False
     
+    xdata = []
+    ydata = []
+    
     # main loop
     
     while True:
@@ -268,8 +310,12 @@ if __name__ == '__main__':
             print("Fluents:", len(fluents))
             result = backtrace(layers)
             print("Shortest Path:", print_path_short(result))
-            print("Mileage:",path_mileage(result))
+            mm = path_mileage(result)
+            print("Mileage:", mm)
             print()
+            
+            xdata.append(len(layers)-1)
+            ydata.append(mm)
             if (len(layers) == 18):
                 break
             
@@ -277,6 +323,11 @@ if __name__ == '__main__':
         layers.append(layers[len(layers)-1].nextLayer())
     
     print("Done.")
+    
+    plt.figure()
+    plt.plot(xdata, ydata)
+    plt.ylabel("Minimum Mileage")
+    plt.xlabel("Layer")
     
 #    if (result != None):
 #        print("Problem solved.")
