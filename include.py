@@ -110,10 +110,11 @@ def average_parts_needed(Widgets):
     summ=0
     for w in Widgets:
         summ+=len(w.componentStructure)-len(w.components)
-        
+
     return summ/len(Widgets)
 
 def get_miles(start, end):
+    # return the distance between start and end according to the table
     if (start == ''):
         return 0
     start_int = ord(start)-ord('A')
@@ -122,6 +123,8 @@ def get_miles(start, end):
     return mileageTable[start_int][end_int]
 
 def get_min_miles(start, end):
+    # return the minimum distance between start and end
+    # not necessarily in one step
     if (start == ''):
         return 0
     start_int = ord(start)-ord('A')
