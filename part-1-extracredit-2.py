@@ -6,6 +6,18 @@ Created on Sun Mar 11 15:38:20 2018
 
 
 Identical to part_1_1 except we use the cost instead of the evaluation functions
+and implemented some additional optimizations
+
+Path with minimum stops:
+BDAEDCABCDE
+Stops: 11
+Nodes expanded: 46474
+
+Path with least mileage:
+DEBEAEDEBECAEBED
+Miles: 5473
+Nodes expanded: 1018969
+
 """
 
 
@@ -153,20 +165,30 @@ def solve(Widgets, mileage=False):
         
         pos=0
         
-        if (minnode.value != 'A'):  # ignore new states where nothing was accomplished
-                                                # only applies for minimum steps
+        if (minnode.value != 'A' and (
+                (mileage == False and inc.average_parts_needed(newNodeA.widgets) != inc.average_parts_needed(curWidgets)) or (
+                (mileage == True and newNodeA.cost-minnode.cost <= inc.get_min_miles(minnode.value, 'A'))))):  
+                                                # save time
             pos = find_position(frontier, newNodeA.cost)
             frontier.insert(pos, newNodeA)
-        if (minnode.value != 'B'):
+        if (minnode.value != 'B' and (
+                (mileage == False and inc.average_parts_needed(newNodeB.widgets) != inc.average_parts_needed(curWidgets)) or (
+                (mileage == True and newNodeB.cost-minnode.cost <= inc.get_min_miles(minnode.value, 'B'))))):   
             pos = find_position(frontier, newNodeB.cost)
             frontier.insert(pos, newNodeB)
-        if (minnode.value != 'C'):
+        if (minnode.value != 'C' and (
+                (mileage == False and inc.average_parts_needed(newNodeC.widgets) != inc.average_parts_needed(curWidgets)) or (
+                (mileage == True and newNodeC.cost-minnode.cost <= inc.get_min_miles(minnode.value, 'C'))))):  
             pos = find_position(frontier, newNodeC.cost)
             frontier.insert(pos, newNodeC)
-        if (minnode.value != 'D'):
+        if (minnode.value != 'D' and (
+                (mileage == False and inc.average_parts_needed(newNodeD.widgets) != inc.average_parts_needed(curWidgets)) or (
+                (mileage == True and newNodeD.cost-minnode.cost <= inc.get_min_miles(minnode.value, 'D'))))):  
             pos = find_position(frontier, newNodeD.cost)
             frontier.insert(pos, newNodeD)
-        if (minnode.value != 'E'):
+        if (minnode.value != 'E' and (
+                (mileage == False and inc.average_parts_needed(newNodeE.widgets) != inc.average_parts_needed(curWidgets)) or (
+                (mileage == True and newNodeE.cost-minnode.cost <= inc.get_min_miles(minnode.value, 'E'))))):  
             pos = find_position(frontier, newNodeE.cost)
             frontier.insert(pos, newNodeE)
         
