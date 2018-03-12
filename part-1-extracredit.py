@@ -139,8 +139,6 @@ if __name__ == '__main__':
         print()
         print()
         
-    minstep_nodes = [389,  683,  20172, 22200, 98638, 607737]
-    minmile_nodes = [467, 1138, 10884, 12089, 10788, 1232501]
     
     plt.figure()
     plt.subplot(2,1,1)
