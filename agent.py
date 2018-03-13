@@ -44,7 +44,17 @@ class Agent(object):
                     moves.append((x,y))
         return moves
 
-    
+    def num_empty_spaces(self, gameboard):
+        """Return the number of empty spaces on the board"""
+        count = 0
+        for x in range(gameboard.height):
+            for y in range(gameboard.width):
+                if gameboard.board[x][y] == '.':
+                   count = count + 1
+        return count
+        
+
+        
     def  has_valid_move(self, gameboard):
         """
          Determine if there is at least one valid move that can be played.
