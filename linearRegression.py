@@ -1,8 +1,11 @@
 from board import Board
 from agent import Agent
+from alpha_beta import AlphaBeta
 import random
 import math
-from alpha_beta import AlphaBeta
+import ols
+import numpy as np
+
 
 class LinearAgent(Agent):
     """ 
@@ -100,13 +103,14 @@ class LinearAgent(Agent):
             game[0].print_board()
             print("--------")
             newData = self.featurize(game[0])
-            newData = newData + [game[1]] #an array containing values for features, and the true value of position appended at the end.
+            newData = [game[1]] + newData  #an array containing values for features, and the true value of position appended at the beginning.
             allData.append(newData)
         return allData
         
     def generate_games(self, numGames = 100):
         """Generate games that will be used for training. """
         games = []
+        random.seed(1200) #we want to generate the same sequence of random numbers whenever the program is run. 
         for i in range(numGames):
             curGame = self.generate_one_game()
             gameData = [curGame, self.true_move_value(curGame)] #store the game and the true score of the game. 
@@ -169,9 +173,18 @@ class LinearAgent(Agent):
 
 
 learningAgent = LinearAgent("red")
-allData = learningAgent.compile_features_and_data(50)
+allData = learningAgent.compile_features_and_data(500)
 for row in allData:
     print(row)
-    #The first four elements in a row are the features (the independent variables), the last element is the value of the position  (the dependent variable).
-    #Need to perform OLS and show results. 
+    #The first  elememt is the value of the position (the dependent variable), while the remaining four elements in a row are the features (the independent variables)
+    #perform OLS and return results
+
+yVals = [row[0] for row in allData] #first column consists of y values
+yVals = np.array(yVals) #convert to numpy array for easier manipulation
+
+xVals = [row[1:] for row in allData] #second column consists of x values.
+xVals = np.array(xVals)
+
+mymodel = ols.ols(yVals, xVals, 'Score', ["Player_WB", "Opponent_WB", "Empty_Squares", "Player_WB*Empty_Squares"])
+mymodel.summary()
 
