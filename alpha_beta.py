@@ -102,7 +102,7 @@ class AlphaBeta(Agent):
                   
                  return lowest_value
 
-
+    
     def find_move(self, gameboard, depth=3):
 
         """
@@ -133,6 +133,12 @@ class AlphaBeta(Agent):
         self.track_sheet = [] #reset the track sheet.
         
         return best_move
+
+
+
+    def find_move_value(self, gameboard, depth = 2):
+        """Given a particular board state, return the value associated with that state. The deeper we search, the better our estimate is."""
+        return self.find_move_helper(gameboard, 0, depth, float("-inf"), float("inf"))
 
 
 
