@@ -9,7 +9,7 @@ import numpy as np
 
 class LinearAgent(Agent):
     """ 
-    Meta-class of all agents.
+        Class to represent an agent that learns an evaluation function. 
     """
 
 
@@ -170,21 +170,21 @@ class LinearAgent(Agent):
         
 
 
+if __name__ == '__main__':
 
+    learningAgent = LinearAgent("red")
+    allData = learningAgent.compile_features_and_data(500)
+    for row in allData:
+        print(row)
+        #The first  elememt is the value of the position (the dependent variable), while the remaining four elements in a row are the features (the independent variables)
+        #perform OLS and return results
 
-learningAgent = LinearAgent("red")
-allData = learningAgent.compile_features_and_data(500)
-for row in allData:
-    print(row)
-    #The first  elememt is the value of the position (the dependent variable), while the remaining four elements in a row are the features (the independent variables)
-    #perform OLS and return results
+    yVals = [row[0] for row in allData] #first column consists of y values
+    yVals = np.array(yVals) #convert to numpy array for easier manipulation
 
-yVals = [row[0] for row in allData] #first column consists of y values
-yVals = np.array(yVals) #convert to numpy array for easier manipulation
+    xVals = [row[1:] for row in allData] #second column consists of x values.
+    xVals = np.array(xVals)
 
-xVals = [row[1:] for row in allData] #second column consists of x values.
-xVals = np.array(xVals)
-
-mymodel = ols.ols(yVals, xVals, 'Score', ["Player_WB", "Opponent_WB", "Empty_Squares", "Player_WB*Empty_Squares"])
-mymodel.summary()
+    mymodel = ols.ols(yVals, xVals, 'Score', ["Player_WB", "Opponent_WB", "Empty_Squares", "Player_WB*Empty_Squares"])
+    mymodel.summary()
 
